@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bookings — EventX</title>
+    <meta name="description" content="View your booking history on EventX." />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><span>🎫</span> EventX</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="history.html" class="active">My Bookings</a></li>
+            <li id="navLogout">
+                <div class="nav-user">
+                    <span class="nav-user-name" id="navUserName"></span>
+                    <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="history-page">
+        <div class="page-header">
+            <div class="container">
+                <h1>My <span class="gold-text">Bookings</span></h1>
+                <p>Your complete booking history</p>
+            </div>
+        </div>
+
+        <div class="section" style="padding-top:40px;">
+            <div class="container">
+
+              
+                <div class="stats-grid" style="margin-bottom:36px;" id="bookingStats">
+                    <div class="loading-overlay" style="grid-column:1/-1">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+
+               
+                <div id="historyList">
+                    <div class="loading-overlay">
+                        <div class="spinner"></div><span>Loading bookings…</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">🎫 EventX</div>
+            <p>Enjoy your event.</p>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+    <script src="js/main.js"></script>
+    <script src="js/history.js"></script>
+</body>
+
+</html>

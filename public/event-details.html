@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details — EventX</title>
+    <meta name="description" content="View event details and book your tickets." />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><span>🎫</span> EventX</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html" class="active">Events</a></li>
+            <li id="navHistory" style="display:none"><a href="history.html">My Bookings</a></li>
+            <li id="navAdmin" style="display:none"><a href="admin.html">Dashboard</a></li>
+            <li id="navLogin"><a href="login.html" class="nav-cta">Login</a></li>
+            <li id="navLogout" style="display:none">
+                <div class="nav-user">
+                    <span class="nav-user-name" id="navUserName"></span>
+                    <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+                </div>
+            </li>
+        </ul>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div id="eventContent">
+        <div class="loading-overlay" style="min-height:100vh;">
+            <div class="spinner"></div><span>Loading event…</span>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:3.5rem;margin-bottom:16px;">🎉</div>
+                <h2 style="border:none;margin-bottom:12px;">Booking Confirmed!</h2>
+                <p style="color:var(--text-muted);margin-bottom:24px;" id="confirmMsg"></p>
+                <div id="confirmDetails"
+                    style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;margin-bottom:24px;text-align:left;">
+                </div>
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                    <a href="history.html" class="btn btn-primary">View My Bookings</a>
+                    <a href="events.html" class="btn btn-outline">Browse More Events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">🎫 EventX</div>
+            <p>Enjoy your event.</p>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+    <script src="js/main.js"></script>
+    <script src="js/event-details.js"></script>
+</body>
+
+</html>

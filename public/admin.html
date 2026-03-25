@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard — EventX</title>
+    <meta name="description" content="Admin dashboard: manage events and view analytics." />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><span>🎫</span> EventX</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="admin.html" class="active">Dashboard</a></li>
+            <li id="navLogout">
+                <div class="nav-user">
+                    <span class="nav-user-name" id="navUserName">Admin</span>
+                    <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div style="padding-top:66px;">
+        <div class="admin-header">
+            <div class="container">
+                <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:4px;">Admin <span
+                        class="gold-text">Dashboard</span></h1>
+                <p style="color:var(--text-muted);">Manage events, track bookings, and view analytics</p>
+            </div>
+        </div>
+
+        <div class="section" style="padding-top:40px;">
+            <div class="container">
+
+
+                <div class="stats-grid" id="statsGrid">
+                    <div class="loading-overlay" style="grid-column:1/-1">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" onclick="switchTab('events')">📅 Manage Events</button>
+                    <button class="admin-tab-btn" onclick="switchTab('analytics')">📊 Analytics</button>
+                    <button class="admin-tab-btn" onclick="switchTab('bookings')">🎟️ All Bookings</button>
+                </div>
+
+                <div class="admin-panel active" id="panelEvents">
+                    <div
+                        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+                        <h2 style="font-size:1.3rem;">All Events</h2>
+                        <button class="btn btn-primary" onclick="openCreateModal()">+ Create Event</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Venue</th>
+                                    <th>Price</th>
+                                    <th>Seats</th>
+                                    <th>Avail.</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventsTableBody">
+                                <tr>
+                                    <td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted);">
+                                        Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="admin-panel" id="panelAnalytics">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:24px;">
+                        <div class="chart-wrapper">
+                            <div class="chart-title">🎟️ Tickets Sold per Event</div>
+                            <canvas id="ticketsChart" height="260"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <div class="chart-title">💰 Revenue per Event (₹)</div>
+                            <canvas id="revenueChart" height="260"></canvas>
+                        </div>
+                        <div class="chart-wrapper" style="grid-column:1/-1">
+                            <div class="chart-title">📋 Event Seat Utilisation (%)</div>
+                            <canvas id="seatChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="admin-panel" id="panelBookings">
+                    <h2 style="font-size:1.3rem;margin-bottom:20px;">Recent Bookings</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Event</th>
+                                    <th>Tickets</th>
+                                    <th>Amount</th>
+                                    <th>Booked On</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">
+                                        Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div id="eventModal" class="modal-overlay" style="display:none;">
+        <div class="modal modal-wide">
+            <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+            <h2 id="modalTitle">Create Event</h2>
+            <form id="eventForm" onsubmit="handleEventSubmit(event)">
+                <input type="hidden" id="editEventId" />
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label for="evTitle">Event Title *</label>
+                        <input type="text" id="evTitle" class="form-control" placeholder="e.g. Tech Summit 2026"
+                            required />
+                    </div>
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label for="evDesc">Description</label>
+                        <textarea id="evDesc" class="form-control" placeholder="Describe your event…"
+                            rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="evDate">Date &amp; Time *</label>
+                        <input type="datetime-local" id="evDate" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="evVenue">Venue *</label>
+                        <input type="text" id="evVenue" class="form-control" placeholder="e.g. HITEX, Hyderabad"
+                            required />
+                    </div>
+                    <div class="form-group">
+                        <label for="evPrice">Ticket Price (₹) *</label>
+                        <input type="number" id="evPrice" class="form-control" placeholder="0" min="0" step="0.01"
+                            required />
+                    </div>
+                    <div class="form-group">
+                        <label for="evSeats">Total Seats *</label>
+                        <input type="number" id="evSeats" class="form-control" placeholder="100" min="1" required />
+                    </div>
+                    <div class="form-group" id="statusGroup" style="display:none;">
+                        <label for="evStatus">Status</label>
+                        <select id="evStatus" class="form-control">
+                            <option value="upcoming">Upcoming</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('eventModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="eventSubmitBtn">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="deleteModal" class="modal-overlay" style="display:none;">
+        <div class="modal" style="max-width:400px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:16px;">⚠️</div>
+            <h2 style="border:none;margin-bottom:12px;">Delete Event?</h2>
+            <p style="color:var(--text-muted);margin-bottom:28px;">This will permanently delete the event and all its
+                bookings. This action cannot be undone.</p>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">🎫 EventX</div>
+            <p>Enjoy your event.</p>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

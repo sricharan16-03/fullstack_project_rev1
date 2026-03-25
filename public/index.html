@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventX — Event Ticketing Platform</title>
+  <meta name="description" content="Browse and book tickets for the finest events." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>" />
+</head>
+
+<body>
+
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">🎫 EventX</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li id="navHistory" style="display:none"><a href="history.html">My Bookings</a></li>
+      <li id="navAdmin" style="display:none"><a href="admin.html">Dashboard</a></li>
+      <li id="navLogin"><a href="login.html" class="nav-cta">Login</a></li>
+      <li id="navLogout" style="display:none">
+        <div class="nav-user">
+          <span class="nav-user-name" id="navUserName"></span>
+          <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+        </div>
+      </li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🎟️ Event Ticketing Platform</div>
+      <h1>Discover and Book Events</h1>
+      <p>Browse upcoming events, secure your tickets, and manage your bookings — all in one place.</p>
+      <div class="hero-btns">
+        <a href="events.html" class="btn btn-primary btn-lg">Explore Events →</a>
+        <a href="login.html" class="btn btn-outline btn-lg">Sign In</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <h2>Upcoming Events</h2>
+        <div class="section-line"></div>
+        <p>Don't miss out on these experiences</p>
+      </div>
+      <div class="events-grid" id="previewEvents">
+        <div class="loading-overlay">
+          <div class="spinner"></div><span>Loading events…</span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:36px;">
+        <a href="events.html" class="btn btn-outline">View All Events →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">🎫 EventX</div>
+      <p>Enjoy your event.</p>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/main.js"></script>
+  <script>
+    function setupNav() {
+      const user = getUser();
+      if (user) {
+        document.getElementById('navLogin').style.display = 'none';
+        document.getElementById('navLogout').style.display = 'block';
+        document.getElementById('navUserName').textContent = user.name;
+        if (user.role === 'admin') {
+          document.getElementById('navAdmin').style.display = 'block';
+        } else {
+          document.getElementById('navHistory').style.display = 'block';
+        }
+      }
+    }
+
+    async function loadPreviewEvents() {
+      try {
+        const events = await apiFetch('/api/events?status=upcoming');
+        const container = document.getElementById('previewEvents');
+        const preview = events.slice(0, 3);
+        if (!preview.length) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎭</div><p>No upcoming events yet.</p></div>`;
+          return;
+        }
+        container.innerHTML = preview.map(e => eventCardHTML(e)).join('');
+      } catch {
+        document.getElementById('previewEvents').innerHTML = `<div class="empty-state"><p>Could not load events.</p></div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNav();
+      loadPreviewEvents();
+    });
+  </script>
+</body>
+
+</html>
